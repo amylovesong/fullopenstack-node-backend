@@ -1,4 +1,5 @@
-const http = require('http') // import built-in module
+const express = require('express') // express is a function
+const app = express()
 
 let notes = [
   {
@@ -18,14 +19,17 @@ let notes = [
   }
 ]
 
-// create a new web server
-const app = http.createServer((request, response) => {
-  // response.writeHead(200, { 'Content-Type': 'text/plain' })
-  // response.end('Hello World')
-  response.writeHead(200, { 'Content-Type': 'application/json' })
-  response.end(JSON.stringify(notes)) // string or buffer as response body
+app.get('/', (request, response) => {
+  // automatically set Content-Type to text/html, and the status code is 200
+  response.send('<h1>Hello World!</h1>')
+})
+
+app.get('/api/notes', (request, response) => {
+  // automatically set Content-Type to application/json, and the status code is 200
+  response.json(notes) // automatically transform notes array to JSON formatted string
 })
 
 const PORT = 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
