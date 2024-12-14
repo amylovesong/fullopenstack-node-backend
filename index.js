@@ -1,6 +1,8 @@
 const express = require('express') // express is a function
+const cors = require('cors')
 const app = express()
 
+app.use(cors()) // allow cross-origin resource sharing
 app.use(express.json()) // activate the Express json-parser
 
 // define a middleware function
