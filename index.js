@@ -3,6 +3,7 @@ const cors = require('cors')
 const app = express()
 
 app.use(cors()) // allow cross-origin resource sharing
+app.use(express.static('dist')) // make Express show static content in the 'dist' directory
 app.use(express.json()) // activate the Express json-parser
 
 // define a middleware function
@@ -101,7 +102,7 @@ const unknownEndpoint = (request, response) => {
 // use middleware after routes
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.POST || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
