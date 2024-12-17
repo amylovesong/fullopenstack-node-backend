@@ -36,14 +36,45 @@ let notes = [
   }
 ]
 
+const mongoose = require('mongoose')
+
+// access database url from the local .env file
+require('dotenv').config() // must have this line, otherwise the url will be undefined
+const url = process.env.MONGODB_URI
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  important: Boolean
+})
+
+// modify the toJSON method to format the objects returned by database
+noteSchema.set('toJSON', {
+  transform: (document, returnedObject) => {
+    console.log('transform before --> ', returnedObject)
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+    console.log('transform after <--', returnedObject)
+  }
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
 app.get('/', (request, response) => {
   // automatically set Content-Type to text/html, and the status code is 200
   response.send('<h1>Hello World!</h1>')
 })
 
 app.get('/api/notes', (request, response) => {
-  // automatically set Content-Type to application/json, and the status code is 200
-  response.json(notes) // automatically transform notes array to JSON formatted string
+  Note.find({}).then(notes => {
+    // automatically set Content-Type to application/json, and the status code is 200
+    // automatically transform notes array to JSON formatted string
+    // automatically use the above defined toJSON when formatting notes array
+    response.json(notes)
+  })
 })
 
 app.get('/api/notes/:id', (request, response) => {
