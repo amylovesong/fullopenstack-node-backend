@@ -1,6 +1,9 @@
+require('dotenv').config() // import dotenv to enable access env variables
 const express = require('express') // express is a function
 const cors = require('cors')
 const app = express()
+// import the defined Note model
+const Note = require('./models/note')
 
 app.use(cors()) // allow cross-origin resource sharing
 app.use(express.static('dist')) // make Express show static content in the 'dist' directory
@@ -35,33 +38,6 @@ let notes = [
     important: true
   }
 ]
-
-const mongoose = require('mongoose')
-
-// access database url from the local .env file
-require('dotenv').config() // must have this line, otherwise the url will be undefined
-const url = process.env.MONGODB_URI
-
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean
-})
-
-// modify the toJSON method to format the objects returned by database
-noteSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    console.log('transform before --> ', returnedObject)
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-    console.log('transform after <--', returnedObject)
-  }
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 app.get('/', (request, response) => {
   // automatically set Content-Type to text/html, and the status code is 200
@@ -133,7 +109,7 @@ const unknownEndpoint = (request, response) => {
 // use middleware after routes
 app.use(unknownEndpoint)
 
-const PORT = process.env.POST || 3001
+const PORT = process.env.POST
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
