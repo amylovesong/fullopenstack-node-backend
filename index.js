@@ -55,13 +55,16 @@ app.get('/api/notes', (request, response) => {
 
 app.get('/api/notes/:id', (request, response) => {
   const id = request.params.id
-  const note = notes.find(note => note.id === id)
-  if (note) { // all JavaScript objects are truthy
+  Note.findById(id).then(note => {
     response.json(note)
-  } else {
-    // response.status(404).end() // custom status code and return to the request sender
-    response.status(404).send(`No note found for id: ${id}, please check it`)
-  }
+  })
+
+  // if (note) { // all JavaScript objects are truthy
+  //   response.json(note)
+  // } else {
+  //   // response.status(404).end() // custom status code and return to the request sender
+  //   response.status(404).send(`No note found for id: ${id}, please check it`)
+  // }
 })
 
 app.delete('/api/notes/:id', (request, response) => {
@@ -90,16 +93,14 @@ app.post('/api/notes', (request, response) => {
     })
   }
 
-  const note = {
+  const note = new Note({
     content: body.content,
-    important: Boolean(body.important) || false,
-    id: generateId(),
-  }
-  console.log('request.body', note);
+    important: body.important || false,
+  })
 
-  notes = notes.concat(note)
-
-  response.json(note)
+  note.save().then(savedNote => {
+    response.json(savedNote)
+  })
 })
 
 const unknownEndpoint = (request, response) => {

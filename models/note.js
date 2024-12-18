@@ -21,11 +21,11 @@ const noteSchema = new mongoose.Schema({
 // modify the toJSON method to format the objects returned by database
 noteSchema.set('toJSON', {
   transform: (document, returnedObject) => {
-    console.log('transform before --> ', returnedObject)
+    // console.log('transform before --> ', returnedObject)
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
-    console.log('transform after <--', returnedObject)
+    // console.log('transform after <--', returnedObject)
   }
 })
 
