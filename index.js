@@ -7,7 +7,7 @@ const Note = require('./models/note')
 
 app.use(cors()) // allow cross-origin resource sharing
 app.use(express.static('dist')) // make Express show static content in the 'dist' directory
-app.use(express.json()) // activate the Express json-parser
+app.use(express.json()) // activate the Express json-parser. This must be here before the routers otherwise the request.body is undefined
 
 // define a middleware function
 const requestLogger = (request, response, next) => {
