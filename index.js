@@ -21,24 +21,6 @@ const requestLogger = (request, response, next) => {
 // use the middleware above
 app.use(requestLogger)
 
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true
-  }
-]
-
 app.get('/', (request, response) => {
   // automatically set Content-Type to text/html, and the status code is 200
   response.send('<h1>Hello World!</h1>')
@@ -66,20 +48,14 @@ app.get('/api/notes/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.delete('/api/notes/:id', (request, response) => {
+app.delete('/api/notes/:id', (request, response, next) => {
   const id = request.params.id
-  notes = notes.filter(note => note.id !== id)
-
-  response.status(204).end()
+  Note.findByIdAndDelete(id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error)) // pass exceptions onto the error handler
 })
-
-const generateId = () => {
-  const maxId = notes.length > 0
-    ? Math.max(...notes.map(n => Number(n.id))) // mapping the notes to ids and finding out the largest number
-    : 0 // '...' is the 'three dot' spread syntax
-  
-  return String(maxId + 1)
-}
 
 app.post('/api/notes', (request, response) => {
   console.log('request.headers', request.headers);
@@ -100,6 +76,24 @@ app.post('/api/notes', (request, response) => {
   note.save().then(savedNote => {
     response.json(savedNote)
   })
+})
+
+app.put('/api/notes/:id', (request, response, next) => {
+  const body = request.body
+
+  const note = {
+    content: body.content,
+    important: body.important
+  }
+
+  // By default, the updatedNote receives the original document without the modifications.
+  // Add the optional { new: true } parameter will cause the event handler to be called
+  // with the new modified document instead of the original
+  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+    .then(updatedNote => {
+      response.json(updatedNote)
+    })
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
