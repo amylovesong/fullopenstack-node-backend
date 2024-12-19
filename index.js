@@ -53,18 +53,17 @@ app.get('/api/notes', (request, response) => {
   })
 })
 
-app.get('/api/notes/:id', (request, response) => {
+app.get('/api/notes/:id', (request, response, next) => {
   const id = request.params.id
-  Note.findById(id).then(note => {
-    response.json(note)
-  })
-
-  // if (note) { // all JavaScript objects are truthy
-  //   response.json(note)
-  // } else {
-  //   // response.status(404).end() // custom status code and return to the request sender
-  //   response.status(404).send(`No note found for id: ${id}, please check it`)
-  // }
+  Note.findById(id)
+    .then(note => {
+      if (note) { // all JavaScript objects are truthy
+        response.json(note)  
+      } else {
+        response.status(404).end() // custom status code and return to the request sender
+      }      
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/notes/:id', (request, response) => {
@@ -109,6 +108,23 @@ const unknownEndpoint = (request, response) => {
 
 // use middleware after routes
 app.use(unknownEndpoint)
+
+// error handle middleware
+const errorHandler = (error, request, response, next) => {
+  // log the error
+  console.error('errorHandler:', error.message)
+
+  // handle a specified error
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id'})
+  }
+  
+  // pass the error forward
+  next(error)
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler)
 
 const PORT = process.env.POST
 app.listen(PORT, () => {
