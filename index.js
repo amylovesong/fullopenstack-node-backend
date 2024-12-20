@@ -16,7 +16,7 @@ const requestLogger = (request, response, next) => {
   console.log('Body:  ', request.body)
   console.log('---')
   next()
-} 
+}
 
 // use the middleware above
 app.use(requestLogger)
@@ -40,10 +40,10 @@ app.get('/api/notes/:id', (request, response, next) => {
   Note.findById(id)
     .then(note => {
       if (note) { // all JavaScript objects are truthy
-        response.json(note)  
+        response.json(note)
       } else {
         response.status(404).end() // custom status code and return to the request sender
-      }      
+      }
     })
     .catch(error => next(error))
 })
@@ -51,14 +51,14 @@ app.get('/api/notes/:id', (request, response, next) => {
 app.delete('/api/notes/:id', (request, response, next) => {
   const id = request.params.id
   Note.findByIdAndDelete(id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error)) // pass exceptions onto the error handler
 })
 
 app.post('/api/notes', (request, response, next) => {
-  console.log('request.headers', request.headers);
+  console.log('request.headers', request.headers)
   // if the request headers' Content-Type is not 'application/json'，the request.body will be a empty JSON：'{}'
   const body = request.body
 
@@ -108,11 +108,11 @@ const errorHandler = (error, request, response, next) => {
 
   // handle a specified error
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id'})
+    return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message})
+    return response.status(400).json({ error: error.message })
   }
-  
+
   // pass the error forward
   next(error)
 }
