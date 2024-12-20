@@ -57,25 +57,21 @@ app.delete('/api/notes/:id', (request, response, next) => {
     .catch(error => next(error)) // pass exceptions onto the error handler
 })
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', (request, response, next) => {
   console.log('request.headers', request.headers);
   // if the request headers' Content-Type is not 'application/json'，the request.body will be a empty JSON：'{}'
   const body = request.body
-
-  if (!body.content) {
-    return response.status(400).json({ // code 400 means 'bad request'
-      error: 'content missing'
-    })
-  }
 
   const note = new Note({
     content: body.content,
     important: body.important || false,
   })
 
-  note.save().then(savedNote => {
-    response.json(savedNote)
-  })
+  note.save()
+    .then(savedNote => {
+      response.json(savedNote)
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
@@ -89,7 +85,9 @@ app.put('/api/notes/:id', (request, response, next) => {
   // By default, the updatedNote receives the original document without the modifications.
   // Add the optional { new: true } parameter will cause the event handler to be called
   // with the new modified document instead of the original
-  Note.findByIdAndUpdate(request.params.id, note, { new: true })
+  // Validations are not run by default when findByIdAndUpdate and related methods are executed, so modify the code like this:
+  const options = { new: true, runValidators: true, context: 'query' }
+  Note.findByIdAndUpdate(request.params.id, note, options)
     .then(updatedNote => {
       response.json(updatedNote)
     })
@@ -111,6 +109,8 @@ const errorHandler = (error, request, response, next) => {
   // handle a specified error
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id'})
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message})
   }
   
   // pass the error forward
