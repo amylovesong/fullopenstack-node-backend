@@ -1,18 +1,5 @@
 const mongoose = require('mongoose')
 
-mongoose.set('strictQuery', false)
-
-// access database url from the local .env file
-const url = process.env.MONGODB_URI
-
-mongoose.connect(url)
-  .then(() => {
-    console.log('connected to MongoDB')
-  })
-  .catch(error => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
-
 const noteSchema = new mongoose.Schema({
   content: { // a specific validation rules for 'content' field
     type: String,
