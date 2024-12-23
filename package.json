@@ -8,7 +8,7 @@
     "build:ui": "rm -rf dist && cd ../introdemo && npm run build && cp -r dist ../note-backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
     "lint": "eslint .",    
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "author": "",
   "license": "ISC",
