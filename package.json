@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon index.js",    
+    "test": "NODE_ENV=test node --test",
     "build:ui": "rm -rf dist && cd ../introdemo && npm run build && cp -r dist ../note-backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
-    "lint": "eslint .",    
-    "test": "node --test"
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
