@@ -1,14 +1,14 @@
 const notesRouter = require('express').Router()
+const logger = require('../utils/logger')
 // import the defined Note model
 const Note = require('../models/note')
 
-notesRouter.get('/', (request, response) => {
-  Note.find({}).then(notes => {
-    // automatically set Content-Type to notesRouterlication/json, and the status code is 200
-    // automatically transform notes array to JSON formatted string
-    // automatically use the above defined toJSON when formatting notes array
-    response.json(notes)
-  })
+notesRouter.get('/', async (request, response) => {
+  const notes = await Note.find({})
+  // automatically set Content-Type to notesRouterlication/json, and the status code is 200
+  // automatically transform notes array to JSON formatted string
+  // automatically use the above defined toJSON when formatting notes array
+  response.json(notes)
 })
 
 notesRouter.get('/:id', (request, response, next) => {
