@@ -28,14 +28,14 @@ beforeEach(async () => {
   await noteObject.save()
 })
 
-test('notes are returned as json', async () => {
+test.only('notes are returned as json', async () => {
   await api
     .get('/api/notes')
     .expect(200)
     .expect('Content-Type', /application\/json/) // the desired value is defined as regular expression or in short regex
 })
 
-test('there are two notes', async () => {
+test.only('there are two notes', async () => {
   const response = await api.get('/api/notes')
 
   assert.strictEqual(response.body.length, initialNotes.length)
