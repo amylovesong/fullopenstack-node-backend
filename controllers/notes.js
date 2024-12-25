@@ -24,7 +24,7 @@ notesRouter.get('/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-notesRouter.post('/', (request, response, next) => {
+notesRouter.post('/', async (request, response, next) => {
   logger.info('request.headers', request.headers)
   // if the request headers' Content-Type is not 'notesRouterlication/json'，the request.body will be a empty JSON：'{}'
   const body = request.body
@@ -34,11 +34,13 @@ notesRouter.post('/', (request, response, next) => {
     important: body.important || false,
   })
 
-  note.save()
-    .then(savedNote => {
-      response.json(savedNote)
-    })
-    .catch(error => next(error))
+  // note.save()
+  //   .then(savedNote => {
+  //   })
+  //   .catch(error => next(error))
+
+  const savedNote = await note.save()
+  response.status(201).json(savedNote)
 })
 
 notesRouter.delete('/:id', (request, response, next) => {
