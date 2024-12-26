@@ -11,17 +11,18 @@ notesRouter.get('/', async (request, response) => {
   response.json(notes)
 })
 
-notesRouter.get('/:id', (request, response, next) => {
+notesRouter.get('/:id', async (request, response, next) => {
   const id = request.params.id
-  Note.findById(id)
-    .then(note => {
-      if (note) { // all JavaScript objects are truthy
-        response.json(note)
-      } else {
-        response.status(404).end() // custom status code and return to the request sender
-      }
-    })
-    .catch(error => next(error))
+  try {
+    const note = await Note.findById(id)
+    if (note) { // all JavaScript objects are truthy
+      response.json(note)
+    } else {
+      response.status(404).end() // custom status code and return to the request sender
+    }
+  } catch (exception) {
+    next(exception)
+  }
 })
 
 notesRouter.post('/', async (request, response, next) => {
@@ -33,23 +34,23 @@ notesRouter.post('/', async (request, response, next) => {
     content: body.content,
     important: body.important || false,
   })
-
-  // note.save()
-  //   .then(savedNote => {
-  //   })
-  //   .catch(error => next(error))
-
-  const savedNote = await note.save()
-  response.status(201).json(savedNote)
+  try {
+    const savedNote = await note.save()
+    response.status(201).json(savedNote)
+  } catch (exception) {
+    next(exception)
+  }
 })
 
-notesRouter.delete('/:id', (request, response, next) => {
-  const id = request.params.id
-  Note.findByIdAndDelete(id)
-    .then(() => {
-      response.status(204).end()
-    })
-    .catch(error => next(error)) // pass exceptions onto the error handler
+notesRouter.delete('/:id', async (request, response, next) => {
+  try {
+    const id = request.params.id
+    await Note.findByIdAndDelete(id)
+    response.status(204).end()
+  } catch (exception) {
+    // pass exceptions onto the error handler
+    next(exception)
+  }
 })
 
 notesRouter.put('/:id', (request, response, next) => {
