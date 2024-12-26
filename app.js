@@ -1,5 +1,6 @@
 const config = require('./utils/config')
 const express = require('express') // express is a function
+require('express-async-errors')
 const app = express()
 const cors = require('cors')
 const notesRouter = require('./controllers/notes')
