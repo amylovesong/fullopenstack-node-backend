@@ -12,10 +12,13 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await Note.deleteMany({}) // clear out the database
-  let noteObject = new Note(helper.initialNotes[0])
-  await noteObject.save()
-  noteObject = new Note(helper.initialNotes[1])
-  await noteObject.save()
+
+  const noteObjects = helper.initialNotes
+    .map(note => new Note(note))
+  const promiseArray = noteObjects.map(note => note.save())
+  // Promise.all executes the promises in parallel.
+  // If the promises need to be executed in a particular order, the operations can be executed inside of a for...of block.
+  await Promise.all(promiseArray)
 })
 
 test.only('notes are returned as json', async () => {
