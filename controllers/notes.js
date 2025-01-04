@@ -6,6 +6,8 @@ const User = require('../models/user')
 
 notesRouter.get('/', async (request, response) => {
   const notes = await Note.find({})
+    .populate('user', { username: 1, name: 1 })
+
   // automatically set Content-Type to notesRouterlication/json, and the status code is 200
   // automatically transform notes array to JSON formatted string
   // automatically use the above defined toJSON when formatting notes array
