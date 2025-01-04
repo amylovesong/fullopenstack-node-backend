@@ -2,6 +2,7 @@ const notesRouter = require('express').Router()
 const logger = require('../utils/logger')
 // import the defined Note model
 const Note = require('../models/note')
+const User = require('../models/user')
 
 notesRouter.get('/', async (request, response) => {
   const notes = await Note.find({})
@@ -26,11 +27,19 @@ notesRouter.post('/', async (request, response) => {
   // if the request headers' Content-Type is not 'notesRouterlication/json'，the request.body will be a empty JSON：'{}'
   const body = request.body
 
+  const user = await User.findById(body.userId)
+
   const note = new Note({
     content: body.content,
     important: body.important || false,
+    user: user.id
   })
+
   const savedNote = await note.save()
+  // also change user object
+  user.notes = user.notes.concat(savedNote._id)
+  await user.save()
+
   response.status(201).json(savedNote)
 })
 
