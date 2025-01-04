@@ -24,7 +24,13 @@ loginRouter.post('/', async (request, response) => {
 
   // create the user token by jsonwebtoken.sign() and digitally signed using the env variable SECRET
   // the digital signature ensures that only parties who know the secret can generate a valid token
-  const token = jwt.sign(userForToken, process.env.SECRET)
+  const token = jwt.sign(
+    userForToken,
+    process.env.SECRET,
+    {
+      expiresIn: 60 * 60 // unit: seconds
+    }
+  )
 
   response
     .status(200)
