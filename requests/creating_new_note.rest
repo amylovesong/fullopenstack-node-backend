@@ -1,11 +1,11 @@
 // 请求和 headers 之间不能有空行
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFteWxvdmVzb25nIiwiaWQiOiI2NzcwMGY4ODg2MTgyNWNiYmIzOGRkNjQiLCJpYXQiOjE3MzU5ODgyOTB9.dcpdYasCPl9t5wLVy6TgvD6NCXAbrLx8vZHvara6pcw
 
 {
-  "content": "User id of the note creator is at the start sent along the request",
-  "important": true,
-  "userId": "67700f88861825cbbb38dd64"
+  "content": "Single page apps use token based auth",
+  "important": false
 }
 
 # {
