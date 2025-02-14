@@ -13,7 +13,7 @@ loginRouter.post('/', async (request, response) => {
 
   if (!(user && passwordCorrect)) {
     return response.status(401).json({ // 401 means unauthorized
-      error: 'invalid username or password'
+      error: !user ? `user '${username}' not existed` : 'invalid password'
     })
   }
 
